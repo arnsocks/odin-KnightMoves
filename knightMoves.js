@@ -1,6 +1,7 @@
 function knightMoves(start, end) {
   // Takes a start and an end vertex
   // returns the shortest knight-move path between them as a list of intermediate vertices
+
   if (start == end) {
     console.log("Congratulations, you're already there! No moves needed.");
   }
@@ -20,11 +21,24 @@ function knightMoves(start, end) {
   let queue = [start];
 
   let maxMoves = 10;
-  let j = 0;
-  while (queue.length > 0 && j < maxMoves) {
-    console.log(`Queue: ${queue}`);
+  let j = 1;
+  while (queue.length > 0 && j <= maxMoves) {
+    console.log("Move #: " + j);
+    console.log("Queue: ");
+    console.log(queue);
     let current = queue.shift();
-    visited.push([current]);
+    console.log("Current: ");
+    console.log(current);
+    console.log("Target: ");
+    console.log(end);
+    console.log(`Match? ${nodeEqual(current, end)}`);
+    visited.push(current);
+
+    if (nodeEqual(current, end)) {
+      console.log("WE HAVE A MATCH");
+      console.log(visited);
+      return;
+    }
 
     let newMoves = [];
 
@@ -36,19 +50,22 @@ function knightMoves(start, end) {
       } else if (visited.includes(next)) {
         console.log(`Next (${next} was already visited and is excluded)`);
         continue;
-      } else if (next == end) {
-        console.log("We got to the end");
-        return;
       } else {
         newMoves.push(next);
         queue.push(next);
       }
     }
-    console.log(`Current: ${current}`);
+    console.log("Current: ");
+    console.log(current);
     console.log(`visited: ${visited}`);
-    console.log(newMoves);
     j++;
   }
 }
 
-knightMoves([0, 0], [7, 7]);
+knightMoves([0, 0], [4, 2]);
+
+function nodeEqual(arrA, arrB) {
+  if (arrA[0] != arrB[0]) return false;
+  if (arrA[1] != arrB[1]) return false;
+  return true;
+}
