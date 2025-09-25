@@ -1,3 +1,10 @@
+class Node {
+  constructor(loc, parent = null) {
+    this.loc = loc;
+    this.parent = parent;
+  }
+}
+
 function knightMoves(start, end) {
   // Takes a start and an end vertex
   // returns the shortest knight-move path between them as a list of intermediate vertices
@@ -5,6 +12,8 @@ function knightMoves(start, end) {
   if (start == end) {
     console.log("Congratulations, you're already there! No moves needed.");
   }
+
+  start = new Node(start);
 
   let moves = [
     [+2, +1],
@@ -31,17 +40,17 @@ function knightMoves(start, end) {
     console.log(current);
     visited.push(current);
 
-    if (nodeEqual(current, end)) {
+    console.log("testing if current = end");
+    if (nodeEqual(current.loc, end)) {
       console.log("WE HAVE A MATCH");
-      console.log(visited);
+      console.log(reportPath(current));
       return;
     }
-
-    let newMoves = [];
+    console.log("No match");
 
     // add any possible next moves to the queue
     for (let i = 0; i < moves.length; i++) {
-      let next = [current[0] + moves[i][0], current[1] + moves[i][1]];
+      let next = [current.loc[0] + moves[i][0], current.loc[1] + moves[i][1]];
       let inQueue = false;
       let inVisited = false;
 
@@ -52,7 +61,9 @@ function knightMoves(start, end) {
 
       // Do not include moves that are to nodes already visited
       for (let k = 0; k < visited.length; k++) {
-        if (nodeEqual(next, visited[k])) {
+        // console.log("testing if next has already been visited");
+        // console.log(`Visited[k] = ${visited[k]}. Next = ${next}`);
+        if (nodeEqual(next, visited[k].loc)) {
           console.log(`Next (${next}) was already visited and is excluded`);
           inVisited = true;
           break;
@@ -61,7 +72,7 @@ function knightMoves(start, end) {
 
       // Do not include moves that are already in the queue
       for (let k = 0; k < queue.length; k++) {
-        if (nodeEqual(next, queue[k])) {
+        if (nodeEqual(next, queue[k].loc)) {
           console.log(
             `Next (${next}) was already in the queue and is excluded`
           );
@@ -69,8 +80,10 @@ function knightMoves(start, end) {
           break;
         }
       }
-      // newMoves.push(next);
-      if (!inVisited && !inQueue) queue.push(next);
+      if (!inVisited && !inQueue) {
+        let nextNode = new Node(next, current);
+        queue.push(nextNode);
+      }
     }
     console.log("Current: ");
     console.log(current);
@@ -85,4 +98,11 @@ function nodeEqual(arrA, arrB) {
   if (arrA[0] != arrB[0]) return false;
   if (arrA[1] != arrB[1]) return false;
   return true;
+}
+
+function reportPath(node) {
+  if (node === null) return [];
+  let path = reportPath(node.parent);
+  path.push(node.loc);
+  return path;
 }
