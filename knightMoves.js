@@ -9,13 +9,10 @@ function knightMoves(start, end) {
   // Takes a start and an end vertex
   // returns the shortest knight-move path between them as a list of intermediate vertices
 
-  if (start == end) {
-    console.log("Congratulations, you're already there! No moves needed.");
-  }
-
+  // Convert start from a set of coordinates to a node with no parent
   start = new Node(start);
 
-  let moves = [
+  const moves = [
     [+2, +1],
     [+2, -1],
     [+1, +2],
@@ -29,24 +26,19 @@ function knightMoves(start, end) {
   let visited = [];
   let queue = [start];
 
-  let maxMoves = 20000;
-  let j = 1;
-  while (queue.length > 0 && j < maxMoves) {
-    console.log("Move #: " + j);
-    console.log("Queue: ");
-    console.log(queue);
+  // BFS means that the first time we visit the end node, that was the fastest path to that node.
+  while (queue.length > 0) {
     let current = queue.shift();
-    console.log("Current: ");
-    console.log(current);
-    visited.push(current);
 
-    console.log("testing if current = end");
+    // Check to see if we are at the destination
     if (nodeEqual(current.loc, end)) {
-      console.log("WE HAVE A MATCH");
-      console.log(reportPath(current));
+      let path = reportPath(current);
+      console.log(
+        `You made it in ${path.length - 1} moves. Here is your path:`
+      );
+      console.log(path);
       return;
     }
-    console.log("No match");
 
     // add any possible next moves to the queue
     for (let i = 0; i < moves.length; i++) {
@@ -61,10 +53,7 @@ function knightMoves(start, end) {
 
       // Do not include moves that are to nodes already visited
       for (let k = 0; k < visited.length; k++) {
-        // console.log("testing if next has already been visited");
-        // console.log(`Visited[k] = ${visited[k]}. Next = ${next}`);
         if (nodeEqual(next, visited[k].loc)) {
-          console.log(`Next (${next}) was already visited and is excluded`);
           inVisited = true;
           break;
         }
@@ -73,9 +62,6 @@ function knightMoves(start, end) {
       // Do not include moves that are already in the queue
       for (let k = 0; k < queue.length; k++) {
         if (nodeEqual(next, queue[k].loc)) {
-          console.log(
-            `Next (${next}) was already in the queue and is excluded`
-          );
           inQueue = true;
           break;
         }
@@ -85,24 +71,25 @@ function knightMoves(start, end) {
         queue.push(nextNode);
       }
     }
-    console.log("Current: ");
-    console.log(current);
-    console.log(`visited: ${visited}`);
-    j++;
   }
 }
 
-knightMoves([0, 0], [7, 7]);
-
+// utility function for checking node location equality
 function nodeEqual(arrA, arrB) {
   if (arrA[0] != arrB[0]) return false;
   if (arrA[1] != arrB[1]) return false;
   return true;
 }
 
+// recursive function to report the path from start to end
 function reportPath(node) {
   if (node === null) return [];
   let path = reportPath(node.parent);
   path.push(node.loc);
   return path;
 }
+
+// ==================
+// DRIVER CODE
+// ==================
+knightMoves([0, 0], [7, 7]);
